@@ -1,5 +1,4 @@
-#import os
-from pathlib import *
+import os
 import torch
 import subprocess
 from yolov3.models import Darknet
@@ -13,7 +12,6 @@ def download_url(url, outdir):
     subprocess.call(cmd)
 
 
-#use pathlib for better supporting windows
 class YOLOv3:
     def __init__(
             self,
@@ -24,27 +22,9 @@ class YOLOv3:
             return_dict=False
     ):
 
-       # homedir = os.path.expanduser("~")
-        homedir = Path.home()
-
-        #weights_path = os.path.join(homedir, '.torch/models/yolov3.weights')
-        weights_path = homedir.joinpath('.torch/models/yolov3.weights')
-       
-        #os.makedirs(os.path.dirname(weights_path), exist_ok=True)
-        weights_path.parent.mkdir( parents=True, exist_ok=True)
-
-        if not weights_path.exists():
-            url = 'https://pjreddie.com/media/files/yolov3.weights'
-            outdir = str(weights_path.parent)
-            download_url(url, outdir)
-
-        model_def = homedir.joinpath('.torch/config/yolov3.cfg')
-        model_def.parent.mkdir( parents=True, exist_ok=True)
-
-        if not model_def.exists():
-            url = 'https://raw.githubusercontent.com/mkocabas/yolov3-pytorch/master/yolov3/config/yolov3.cfg'
-            outdir = str(model_def.parent)
-            download_url(url, outdir)
+        homedir = os.path.expanduser("~")
+        weights_path = os.path.join(homedir, '.torch/models/yolov3.weights')
+        model_def = os.path.join(homedir, '.torch/config/yolov3.cfg')
 
         self.conf_thres = 0.8
         self.nms_thres = 0.4
@@ -54,8 +34,8 @@ class YOLOv3:
         self.device = device
         self.return_dict = return_dict
 
-        self.model = Darknet(str(model_def), img_size=img_size).to(device)
-        self.model.load_darknet_weights(str(weights_path))
+        self.model = Darknet(model_def, img_size=img_size).to(device)
+        self.model.load_darknet_weights(weights_path)
         # self.model.load_state_dict(torch.load(weights_path))
         self.model.eval()
 
