@@ -8,6 +8,7 @@ from yolov3.utils.datasets import pad_to_square, resize
 
 def download_url(url, outdir):
     print(f'Downloading files from {url}')
+    print(f'Downloading files to {outdir}')
     cmd = ['wget', '-c', url, '-P', outdir]
     subprocess.call(cmd)
 
@@ -30,19 +31,19 @@ class YOLOv3:
         weights_path = homedir.joinpath('.torch/models/yolov3.weights')
        
         #os.makedirs(os.path.dirname(weights_path), exist_ok=True)
-        weights_path.parent.mkdir( parents=False, exist_ok=True)
+        weights_path.parent.mkdir( parents=True, exist_ok=True)
 
         if not weights_path.exists():
             url = 'https://pjreddie.com/media/files/yolov3.weights'
-            outdir = weights_path.parent
+            outdir = weights_path.parent.name
             download_url(url, outdir)
 
         model_def = homedir.joinpath('.torch/config/yolov3.cfg')
-        model_def.parent.mkdir( parents=False, exist_ok=True)
+        model_def.parent.mkdir( parents=True, exist_ok=True)
 
         if not model_def.exists():
             url = 'https://raw.githubusercontent.com/mkocabas/yolov3-pytorch/master/yolov3/config/yolov3.cfg'
-            outdir = model_def.parent
+            outdir = model_def.parent.name
             download_url(url, outdir)
 
         self.conf_thres = 0.8
