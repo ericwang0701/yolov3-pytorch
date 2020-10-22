@@ -1,4 +1,5 @@
-import os
+#import os
+
 import torch
 import subprocess
 from yolov3.models import Darknet
@@ -11,6 +12,7 @@ def download_url(url, outdir):
     subprocess.call(cmd)
 
 
+#use pathlib for better supporting windows
 class YOLOv3:
     def __init__(
             self,
@@ -21,22 +23,26 @@ class YOLOv3:
             return_dict=False
     ):
 
-        homedir = os.path.expanduser("~")
+       # homedir = os.path.expanduser("~")
+        homedir = Path.home()
 
-        weights_path = os.path.join(homedir, '.torch/models/yolov3.weights')
-        os.makedirs(os.path.dirname(weights_path), exist_ok=True)
+        #weights_path = os.path.join(homedir, '.torch/models/yolov3.weights')
+        weights_path = homedir.joinpath('.torch/models/yolov3.weights')
+       
+        #os.makedirs(os.path.dirname(weights_path), exist_ok=True)
+        weights_path.parent.mkdir( parents=False, exist_ok=True)
 
-        if not os.path.isfile(weights_path):
+        if not weights_path.exists():
             url = 'https://pjreddie.com/media/files/yolov3.weights'
-            outdir = os.path.dirname(weights_path)
+            outdir = weights_path.parent
             download_url(url, outdir)
 
-        model_def = os.path.join(homedir, '.torch/config/yolov3.cfg')
-        os.makedirs(os.path.dirname(model_def), exist_ok=True)
+        model_def = homedir.joinpath('.torch/config/yolov3.cfg')
+        model_def.parent.mkdir( parents=False, exist_ok=True)
 
-        if not os.path.isfile(model_def):
+        if not model_def.exists():
             url = 'https://raw.githubusercontent.com/mkocabas/yolov3-pytorch/master/yolov3/config/yolov3.cfg'
-            outdir = os.path.dirname(model_def)
+            outdir = model_def.parent
             download_url(url, outdir)
 
         self.conf_thres = 0.8
