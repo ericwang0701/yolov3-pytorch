@@ -35,7 +35,7 @@ class YOLOv3:
 
         if not weights_path.exists():
             url = 'https://pjreddie.com/media/files/yolov3.weights'
-            outdir = weights_path.parent.name
+            outdir = str(weights_path.parent)
             download_url(url, outdir)
 
         model_def = homedir.joinpath('.torch/config/yolov3.cfg')
@@ -43,7 +43,7 @@ class YOLOv3:
 
         if not model_def.exists():
             url = 'https://raw.githubusercontent.com/mkocabas/yolov3-pytorch/master/yolov3/config/yolov3.cfg'
-            outdir = model_def.parent.name
+            outdir = str(model_def.parent)
             download_url(url, outdir)
 
         self.conf_thres = 0.8
@@ -54,8 +54,8 @@ class YOLOv3:
         self.device = device
         self.return_dict = return_dict
 
-        self.model = Darknet(model_def, img_size=img_size).to(device)
-        self.model.load_darknet_weights(weights_path)
+        self.model = Darknet(str(model_def), img_size=img_size).to(device)
+        self.model.load_darknet_weights(str(weights_path))
         # self.model.load_state_dict(torch.load(weights_path))
         self.model.eval()
 
